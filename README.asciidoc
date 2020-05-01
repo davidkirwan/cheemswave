@@ -1,2 +1,28 @@
 == parallax_scrolling README
-xxx
+Playing around with the 2d game library https://github.com/faiface/pixel[Pixel]
+
+Attempts to make a parallax scrolling demo
+
+----
+Usage: make <OPTIONS> ... <TARGETS>
+
+Available targets are:
+
+
+Usage:
+  make <target>
+  help             Show this help screen
+
+All
+  all              Pull dependencies, builds binary, executes binary all in one
+
+Build binary
+  clean            Clean up compiled/generated files
+  build            Compile and build the binary
+
+Fetch dependencies
+  dependencies     Pull down the dependencies
+
+Run
+  run              Execute the compiled binary
+----
