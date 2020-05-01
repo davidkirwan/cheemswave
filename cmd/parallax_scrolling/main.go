@@ -2,13 +2,11 @@ package main
 
 import (
 	"fmt"
-	"image"
 	"math"
 	"math/rand"
-	"os"
 	"time"
 
-	_ "image/png"
+	resources "github.com/davidkirwan/parallax_scrolling/internal/pkg/resources"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
@@ -19,31 +17,12 @@ func init() {
 	//
 }
 
-func loadPNGPicture(path string) (pixel.Picture, error) {
-	file, err := os.Open(path)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-	img, _, err := image.Decode(file)
-	if err != nil {
-		return nil, err
-	}
-	return pixel.PictureDataFromImage(img), nil
-}
-
 func removeTree(s []*pixel.Sprite, index int) []*pixel.Sprite {
 	return append(s[:index], s[index+1:]...)
 }
 
 func removeMatrices(s []pixel.Matrix, index int) []pixel.Matrix {
 	return append(s[:index], s[index+1:]...)
-}
-
-func calculateDistance(x1 float64, y1 float64, x2 float64, y2 float64) bool {
-	distance := math.Sqrt(math.Pow((x2-x1), 2) + math.Pow((y2-y1), 2))
-	fmt.Printf("Distance: %f\n", distance)
-	return distance > 550
 }
 
 func run() {
@@ -57,7 +36,7 @@ func run() {
 		panic(err)
 	}
 
-	spritesheet, err := loadPNGPicture("assets/images/trees.png")
+	spritesheet, err := resources.LoadPNGPicture("assets/images/trees.png")
 	if err != nil {
 		panic(err)
 	}
@@ -136,7 +115,7 @@ func run() {
 		for i, tree := range trees {
 			tree.Draw(win, matrices[i])
 			tb := tree.Picture().Bounds().Center()
-			if calculateDistance(camPos.X, camPos.Y, tb.X, tb.Y) {
+			if resources.CalculateDistance(camPos.X, camPos.Y, tb.X, tb.Y) {
 				markedForRemoval = append(markedForRemoval, i)
 			}
 		}
