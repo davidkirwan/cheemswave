@@ -1,4 +1,4 @@
-== cheemwave README
+== cheemswave README
 Playing around with the 2d game library https://github.com/faiface/pixel[Pixel]
 
 Attempts to make a parallax scrolling game
