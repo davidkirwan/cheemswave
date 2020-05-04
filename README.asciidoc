@@ -1,7 +1,10 @@
 == parallax_scrolling README
 Playing around with the 2d game library https://github.com/faiface/pixel[Pixel]
 
-Attempts to make a parallax scrolling demo
+Attempts to make a parallax scrolling game
+
+image::assets/images/screenshot.png[Screenshot,640,480]
+
 
 ----
 Usage: make <OPTIONS> ... <TARGETS>

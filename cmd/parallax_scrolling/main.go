@@ -96,7 +96,7 @@ func run() {
 		win.SetMatrix(cam)
 
 		if win.JustPressed(pixelgl.MouseButtonLeft) {
-			borkVec = &pixel.Vec{X: cheemVec.X, Y: cheemVec.Y}
+			borkVec = &pixel.Vec{X: cheemVec.X + 30, Y: cheemVec.Y + 50}
 		}
 
 		camPos.X += camSpeed * dt
@@ -119,8 +119,16 @@ func run() {
 			}
 		}
 
+		if win.Pressed(pixelgl.KeyP) {
+			if camSpeed == 0 {
+				camSpeed = 400
+			} else {
+				camSpeed = 0
+			}
+		}
+
 		if win.Pressed(pixelgl.KeyLeft) || win.Pressed(pixelgl.KeyA) {
-			//camPos.X += camSpeed * dt
+			//camPos.X -= camSpeed * dt
 			cheemVec = &pixel.Vec{X: cheemVec.X - (camSpeed*0.2)*dt, Y: cheemVec.Y}
 		}
 		if win.Pressed(pixelgl.KeyRight) || win.Pressed(pixelgl.KeyD) {
@@ -156,7 +164,7 @@ func run() {
 		}
 
 		cheems.Draw(win, pixel.IM.Scaled(pixel.ZV, 0.05).Moved(*cheemVec))
-		bork.Draw(win, pixel.IM.Scaled(pixel.ZV, 1.0).Moved(*borkVec))
+		bork.Draw(win, pixel.IM.Scaled(pixel.ZV, 2.0).Moved(*borkVec))
 
 		win.Update()
 	}
