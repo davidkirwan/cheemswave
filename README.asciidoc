@@ -39,3 +39,5 @@ Testing
 Run
   run              Execute the compiled binary
 ----
+
+If you want to try with the precompiled Linux/Windows binary, move the binary from `+bin/+` to the root of the repository. The `+Linux+` version is `+bin/parallax_scrolling+`, and `+bin/parallax_scrolling.exe+` for the `+Windows+` version, or alternatively copy the `+assets+` folder into the `+bin+` folder, or submit a patch/pull request with changes to the makefile which does this for you!
