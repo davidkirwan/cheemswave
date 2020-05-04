@@ -2,20 +2,19 @@ package main
 
 import (
 	"fmt"
-	"math"
+	"log"
 	"math/rand"
+	"os"
 	"time"
 
 	resources "github.com/davidkirwan/parallax_scrolling/internal/pkg/resources"
 
+	"github.com/faiface/beep/mp3"
+	"github.com/faiface/beep/speaker"
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	"golang.org/x/image/colornames"
 )
-
-func init() {
-	//
-}
 
 func removeTree(s []*pixel.Sprite, index int) []*pixel.Sprite {
 	return append(s[:index], s[index+1:]...)
@@ -26,8 +25,22 @@ func removeMatrices(s []pixel.Matrix, index int) []pixel.Matrix {
 }
 
 func run() {
+	f, err := os.Open("assets/sound/Night_Lights_Original_Mix.mp3")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	streamer, format, err := mp3.Decode(f)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer streamer.Close()
+
+	speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))
+	speaker.Play(streamer)
+
 	cfg := pixelgl.WindowConfig{
-		Title:  "Pixel Rocks!",
+		Title:  "Cheemwave - Night Lights (Original Mix) - created with Pixel",
 		Bounds: pixel.R(0, 0, 1024, 768),
 		VSync:  true,
 	}
@@ -41,6 +54,18 @@ func run() {
 		panic(err)
 	}
 
+	c, err := resources.LoadPNGPicture("assets/images/cheems.png")
+	if err != nil {
+		panic(err)
+	}
+	cheems := pixel.NewSprite(c, c.Bounds())
+
+	b, err := resources.LoadPNGPicture("assets/images/bork.png")
+	if err != nil {
+		panic(err)
+	}
+	bork := pixel.NewSprite(b, b.Bounds())
+
 	var treesFrames []pixel.Rect
 	for x := spritesheet.Bounds().Min.X; x < spritesheet.Bounds().Max.X; x += 32 {
 		for y := spritesheet.Bounds().Min.Y; y < spritesheet.Bounds().Max.Y; y += 32 {
@@ -49,10 +74,12 @@ func run() {
 	}
 
 	var (
-		camPos       = pixel.ZV
-		camSpeed     = 500.0
-		camZoom      = 1.0
-		camZoomSpeed = 1.2
+		camPos   = pixel.ZV
+		cheemVec = &pixel.Vec{X: camPos.X - 400, Y: camPos.Y - 200}
+		borkVec  = &pixel.Vec{X: cheemVec.X - 1000, Y: cheemVec.Y}
+		camSpeed = 400.0
+		camZoom  = 1.0
+		//camZoomSpeed = 1.2
 		// camXStart    = pixel.ZV.X
 		// camYStart    = pixel.ZV.Y
 		trees    []*pixel.Sprite
@@ -69,22 +96,20 @@ func run() {
 		win.SetMatrix(cam)
 
 		if win.JustPressed(pixelgl.MouseButtonLeft) {
-			tree := pixel.NewSprite(spritesheet, treesFrames[rand.Intn(len(treesFrames))])
-			trees = append(trees, tree)
-			mouse := cam.Unproject(win.MousePosition())
-			matrices = append(matrices, pixel.IM.Scaled(pixel.ZV, 4).Moved(mouse))
+			borkVec = &pixel.Vec{X: cheemVec.X, Y: cheemVec.Y}
 		}
+
+		camPos.X += camSpeed * dt
+		x := camPos.X + 1000.0
+		y := camPos.Y + rand.Float64()*600 - 300
 
 		if counter == 250 {
 			counter = 0
 		} else {
 			counter++
-			//camPos.X -= camSpeed * dt
 
-			if counter%50 == 0 {
+			if counter%20 == 0 {
 				fmt.Printf("Counter: %d, X: %f, Y: %f\n", counter, camPos.X, camPos.Y)
-				x := camPos.X - 1000.0
-				y := camPos.Y + rand.Float64()*300
 				tree := pixel.NewSprite(spritesheet, treesFrames[rand.Intn(len(treesFrames))])
 
 				treeVec := &pixel.Vec{X: x, Y: y}
@@ -95,36 +120,43 @@ func run() {
 		}
 
 		if win.Pressed(pixelgl.KeyLeft) || win.Pressed(pixelgl.KeyA) {
-			camPos.X -= camSpeed * dt
+			//camPos.X += camSpeed * dt
+			cheemVec = &pixel.Vec{X: cheemVec.X - (camSpeed*0.2)*dt, Y: cheemVec.Y}
 		}
 		if win.Pressed(pixelgl.KeyRight) || win.Pressed(pixelgl.KeyD) {
-			camPos.X += camSpeed * dt
+			//camPos.X += camSpeed * dt
+			cheemVec = &pixel.Vec{X: cheemVec.X + (camSpeed*2)*dt, Y: cheemVec.Y}
 		}
 		if win.Pressed(pixelgl.KeyDown) || win.Pressed(pixelgl.KeyS) {
-			camPos.Y -= camSpeed * dt
+			//camPos.Y -= camSpeed * dt
+			cheemVec = &pixel.Vec{X: cheemVec.X, Y: cheemVec.Y - camSpeed*dt}
 		}
 		if win.Pressed(pixelgl.KeyUp) || win.Pressed(pixelgl.KeyW) {
-			camPos.Y += camSpeed * dt
+			//camPos.Y += camSpeed * dt
+			cheemVec = &pixel.Vec{X: cheemVec.X, Y: cheemVec.Y + camSpeed*dt}
 		}
-		camZoom *= math.Pow(camZoomSpeed, win.MouseScroll().Y)
+		//camZoom *= math.Pow(camZoomSpeed, win.MouseScroll().Y)
 
-		win.Clear(colornames.Forestgreen)
+		if cheemVec.X < camPos.X-450 {
+			cheemVec = &pixel.Vec{X: camPos.X - 450, Y: cheemVec.Y}
+		}
 
-		markedForRemoval := []int{}
+		if cheemVec.Y > camPos.Y+350 {
+			cheemVec = &pixel.Vec{X: cheemVec.X, Y: camPos.Y + 350}
+		}
+
+		if cheemVec.Y < camPos.Y-350 {
+			cheemVec = &pixel.Vec{X: cheemVec.X, Y: camPos.Y - 350}
+		}
+
+		win.Clear(colornames.Azure)
 
 		for i, tree := range trees {
 			tree.Draw(win, matrices[i])
-			tb := tree.Picture().Bounds().Center()
-			if resources.CalculateDistance(camPos.X, camPos.Y, tb.X, tb.Y) {
-				markedForRemoval = append(markedForRemoval, i)
-			}
 		}
 
-		for i := len(markedForRemoval) - 1; i >= 0; i-- {
-			fmt.Printf("size matrix: %d, size trees: %d\n", len(matrices), len(trees))
-			matrices = removeMatrices(matrices, markedForRemoval[i])
-			trees = removeTree(trees, markedForRemoval[i])
-		}
+		cheems.Draw(win, pixel.IM.Scaled(pixel.ZV, 0.05).Moved(*cheemVec))
+		bork.Draw(win, pixel.IM.Scaled(pixel.ZV, 1.0).Moved(*borkVec))
 
 		win.Update()
 	}

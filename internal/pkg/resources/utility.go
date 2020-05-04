@@ -6,6 +6,7 @@ import (
 	"math"
 	"os"
 
+	// Seems to be needed for the Pixel lib
 	_ "image/png"
 
 	errorUtil "github.com/pkg/errors"
