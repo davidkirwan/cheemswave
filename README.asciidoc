@@ -1,9 +1,15 @@
-== parallax_scrolling README
+== cheemwave README
 Playing around with the 2d game library https://github.com/faiface/pixel[Pixel]
 
 Attempts to make a parallax scrolling game
 
 image::assets/images/screenshot.png[Screenshot,640,480]
+
+----
+Controls:
+a, s, d, f - Movement
+left mouse - bork
+----
 
 
 ----
@@ -22,9 +28,13 @@ All
 Build binary
   clean            Clean up compiled/generated files
   build            Compile and build the binary
+  build-windows    Compile and build the binary for MS Windows
 
 Fetch dependencies
   dependencies     Pull down the dependencies
+
+Testing
+  test-unit        Execute the unit tests
 
 Run
   run              Execute the compiled binary
