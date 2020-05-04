@@ -40,7 +40,7 @@ func run() {
 	speaker.Play(streamer)
 
 	cfg := pixelgl.WindowConfig{
-		Title:  "Cheemwave - Night Lights (Original Mix) - created with Pixel",
+		Title:  "Cheemswave - Night Lights (Original Mix) - created with Pixel",
 		Bounds: pixel.R(0, 0, 1024, 768),
 		VSync:  true,
 	}
@@ -74,11 +74,11 @@ func run() {
 	}
 
 	var (
-		camPos   = pixel.ZV
-		cheemVec = &pixel.Vec{X: camPos.X - 400, Y: camPos.Y - 200}
-		borkVec  = &pixel.Vec{X: cheemVec.X - 1000, Y: cheemVec.Y}
-		camSpeed = 400.0
-		camZoom  = 1.0
+		camPos    = pixel.ZV
+		cheemsVec = &pixel.Vec{X: camPos.X - 400, Y: camPos.Y - 200}
+		borkVec   = &pixel.Vec{X: cheemsVec.X - 1000, Y: cheemsVec.Y}
+		camSpeed  = 400.0
+		camZoom   = 1.0
 		//camZoomSpeed = 1.2
 		// camXStart    = pixel.ZV.X
 		// camYStart    = pixel.ZV.Y
@@ -96,7 +96,7 @@ func run() {
 		win.SetMatrix(cam)
 
 		if win.JustPressed(pixelgl.MouseButtonLeft) {
-			borkVec = &pixel.Vec{X: cheemVec.X + 30, Y: cheemVec.Y + 50}
+			borkVec = &pixel.Vec{X: cheemsVec.X + 30, Y: cheemsVec.Y + 50}
 		}
 
 		camPos.X += camSpeed * dt
@@ -129,32 +129,32 @@ func run() {
 
 		if win.Pressed(pixelgl.KeyLeft) || win.Pressed(pixelgl.KeyA) {
 			//camPos.X -= camSpeed * dt
-			cheemVec = &pixel.Vec{X: cheemVec.X - (camSpeed*0.2)*dt, Y: cheemVec.Y}
+			cheemsVec = &pixel.Vec{X: cheemsVec.X - (camSpeed*0.2)*dt, Y: cheemsVec.Y}
 		}
 		if win.Pressed(pixelgl.KeyRight) || win.Pressed(pixelgl.KeyD) {
 			//camPos.X += camSpeed * dt
-			cheemVec = &pixel.Vec{X: cheemVec.X + (camSpeed*2)*dt, Y: cheemVec.Y}
+			cheemsVec = &pixel.Vec{X: cheemsVec.X + (camSpeed*2)*dt, Y: cheemsVec.Y}
 		}
 		if win.Pressed(pixelgl.KeyDown) || win.Pressed(pixelgl.KeyS) {
 			//camPos.Y -= camSpeed * dt
-			cheemVec = &pixel.Vec{X: cheemVec.X, Y: cheemVec.Y - camSpeed*dt}
+			cheemsVec = &pixel.Vec{X: cheemsVec.X, Y: cheemsVec.Y - camSpeed*dt}
 		}
 		if win.Pressed(pixelgl.KeyUp) || win.Pressed(pixelgl.KeyW) {
 			//camPos.Y += camSpeed * dt
-			cheemVec = &pixel.Vec{X: cheemVec.X, Y: cheemVec.Y + camSpeed*dt}
+			cheemsVec = &pixel.Vec{X: cheemsVec.X, Y: cheemsVec.Y + camSpeed*dt}
 		}
 		//camZoom *= math.Pow(camZoomSpeed, win.MouseScroll().Y)
 
-		if cheemVec.X < camPos.X-450 {
-			cheemVec = &pixel.Vec{X: camPos.X - 450, Y: cheemVec.Y}
+		if cheemsVec.X < camPos.X-450 {
+			cheemsVec = &pixel.Vec{X: camPos.X - 450, Y: cheemsVec.Y}
 		}
 
-		if cheemVec.Y > camPos.Y+350 {
-			cheemVec = &pixel.Vec{X: cheemVec.X, Y: camPos.Y + 350}
+		if cheemsVec.Y > camPos.Y+350 {
+			cheemsVec = &pixel.Vec{X: cheemsVec.X, Y: camPos.Y + 350}
 		}
 
-		if cheemVec.Y < camPos.Y-350 {
-			cheemVec = &pixel.Vec{X: cheemVec.X, Y: camPos.Y - 350}
+		if cheemsVec.Y < camPos.Y-350 {
+			cheemsVec = &pixel.Vec{X: cheemsVec.X, Y: camPos.Y - 350}
 		}
 
 		win.Clear(colornames.Azure)
@@ -163,7 +163,7 @@ func run() {
 			tree.Draw(win, matrices[i])
 		}
 
-		cheems.Draw(win, pixel.IM.Scaled(pixel.ZV, 0.05).Moved(*cheemVec))
+		cheems.Draw(win, pixel.IM.Scaled(pixel.ZV, 0.05).Moved(*cheemsVec))
 		bork.Draw(win, pixel.IM.Scaled(pixel.ZV, 2.0).Moved(*borkVec))
 
 		win.Update()
