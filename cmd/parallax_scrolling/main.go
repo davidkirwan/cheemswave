@@ -3,12 +3,14 @@ package main
 import (
 	"fmt"
 	"log"
+	"math"
 	"math/rand"
 	"os"
 	"time"
 
 	resources "github.com/davidkirwan/parallax_scrolling/internal/pkg/resources"
 
+	"github.com/faiface/beep"
 	"github.com/faiface/beep/mp3"
 	"github.com/faiface/beep/speaker"
 	"github.com/faiface/pixel"
@@ -30,14 +32,18 @@ func run() {
 		log.Fatal(err)
 	}
 
+	done := make(chan bool)
 	streamer, format, err := mp3.Decode(f)
+	loop := beep.Loop(3, streamer)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer streamer.Close()
 
 	speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))
-	speaker.Play(streamer)
+	speaker.Play(beep.Seq(loop, beep.Callback(func() {
+		done <- true
+	})))
 
 	cfg := pixelgl.WindowConfig{
 		Title:  "Cheemswave - Night Lights (Original Mix) - created with Pixel",
@@ -74,14 +80,14 @@ func run() {
 	}
 
 	var (
-		camPos    = pixel.ZV
-		cheemsVec = &pixel.Vec{X: camPos.X - 400, Y: camPos.Y - 200}
-		borkVec   = &pixel.Vec{X: cheemsVec.X - 1000, Y: cheemsVec.Y}
-		camSpeed  = 400.0
-		camZoom   = 1.0
-		//camZoomSpeed = 1.2
-		// camXStart    = pixel.ZV.X
-		// camYStart    = pixel.ZV.Y
+		camPos       = pixel.ZV
+		cheemsVec    = &pixel.Vec{X: camPos.X - 400, Y: camPos.Y - 200}
+		borkVec      = &pixel.Vec{X: cheemsVec.X - 1000, Y: cheemsVec.Y}
+		camSpeed     = 400.0
+		camZoom      = 1.0
+		camZoomSpeed = 1.2
+		//camXStart    = pixel.ZV.X
+		//camYStart    = pixel.ZV.Y
 		trees    []*pixel.Sprite
 		matrices []pixel.Matrix
 		counter  = 0
@@ -103,21 +109,24 @@ func run() {
 		x := camPos.X + 1000.0
 		y := camPos.Y + rand.Float64()*600 - 300
 
+		fmt.Printf("Counter: %d, X: %f, Y: %f\n", counter, camPos.X, len(trees))
 		if counter == 250 {
 			counter = 0
-		} else {
-			counter++
-
+		} else if len(trees) < 250 {
 			if counter%20 == 0 {
-				fmt.Printf("Counter: %d, X: %f, Y: %f\n", counter, camPos.X, camPos.Y)
 				tree := pixel.NewSprite(spritesheet, treesFrames[rand.Intn(len(treesFrames))])
-
 				treeVec := &pixel.Vec{X: x, Y: y}
 				tree.Frame().Moved(*treeVec)
 				trees = append(trees, tree)
 				matrices = append(matrices, pixel.IM.Scaled(pixel.ZV, 4).Moved(*treeVec))
 			}
+		} else {
+			if counter%20 == 0 {
+				treeVec := &pixel.Vec{X: x, Y: y}
+				matrices[counter] = pixel.IM.Scaled(pixel.ZV, 4).Moved(*treeVec)
+			}
 		}
+		counter++
 
 		if win.Pressed(pixelgl.KeyP) {
 			if camSpeed == 0 {
@@ -143,7 +152,7 @@ func run() {
 			//camPos.Y += camSpeed * dt
 			cheemsVec = &pixel.Vec{X: cheemsVec.X, Y: cheemsVec.Y + camSpeed*dt}
 		}
-		//camZoom *= math.Pow(camZoomSpeed, win.MouseScroll().Y)
+		camZoom *= math.Pow(camZoomSpeed, win.MouseScroll().Y)
 
 		if cheemsVec.X < camPos.X-450 {
 			cheemsVec = &pixel.Vec{X: camPos.X - 450, Y: cheemsVec.Y}
