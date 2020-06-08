@@ -88,9 +88,10 @@ func run() {
 		camZoomSpeed = 1.2
 		//camXStart    = pixel.ZV.X
 		//camYStart    = pixel.ZV.Y
-		trees    []*pixel.Sprite
-		matrices []pixel.Matrix
-		counter  = 0
+		trees       []*pixel.Sprite
+		matrices    []pixel.Matrix
+		counter     = 0
+		treeCounter = 0
 	)
 
 	last := time.Now()
@@ -107,23 +108,23 @@ func run() {
 
 		camPos.X += camSpeed * dt
 		x := camPos.X + 1000.0
-		y := camPos.Y + rand.Float64()*600 - 300
+		y := camPos.Y + rand.Float64()*600 - 250
 
 		fmt.Printf("Counter: %d, X: %f, Y: %f\n", counter, camPos.X, len(trees))
-		if counter == 250 {
+		if counter == 400 {
 			counter = 0
-		} else if len(trees) < 250 {
-			if counter%20 == 0 {
+			treeCounter = 0
+		}
+		if counter%20 == 0 {
+			if len(trees) < 20 {
 				tree := pixel.NewSprite(spritesheet, treesFrames[rand.Intn(len(treesFrames))])
 				treeVec := &pixel.Vec{X: x, Y: y}
-				tree.Frame().Moved(*treeVec)
 				trees = append(trees, tree)
 				matrices = append(matrices, pixel.IM.Scaled(pixel.ZV, 4).Moved(*treeVec))
-			}
-		} else {
-			if counter%20 == 0 {
+			} else {
 				treeVec := &pixel.Vec{X: x, Y: y}
-				matrices[counter] = pixel.IM.Scaled(pixel.ZV, 4).Moved(*treeVec)
+				matrices[treeCounter] = pixel.IM.Scaled(pixel.ZV, 4).Moved(*treeVec)
+				treeCounter++
 			}
 		}
 		counter++
