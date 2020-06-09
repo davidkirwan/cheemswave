@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"math"
 	"math/rand"
 	"os"
 	"time"
@@ -60,11 +59,17 @@ func run() {
 		panic(err)
 	}
 
-	c, err := resources.LoadPNGPicture("assets/images/cheems.png")
+	c, err := resources.LoadPNGPicture("assets/images/cheems_forward.png")
 	if err != nil {
 		panic(err)
 	}
 	cheems := pixel.NewSprite(c, c.Bounds())
+
+	c2, err := resources.LoadPNGPicture("assets/images/cheems_backward.png")
+	if err != nil {
+		panic(err)
+	}
+	cheemsBack := pixel.NewSprite(c2, c2.Bounds())
 
 	b, err := resources.LoadPNGPicture("assets/images/bork.png")
 	if err != nil {
@@ -80,18 +85,19 @@ func run() {
 	}
 
 	var (
-		camPos       = pixel.ZV
-		cheemsVec    = &pixel.Vec{X: camPos.X - 400, Y: camPos.Y - 200}
-		borkVec      = &pixel.Vec{X: cheemsVec.X - 1000, Y: cheemsVec.Y}
-		camSpeed     = 400.0
-		camZoom      = 1.0
-		camZoomSpeed = 1.2
+		camPos    = pixel.ZV
+		cheemsVec = &pixel.Vec{X: camPos.X - 400, Y: camPos.Y - 200}
+		borkVec   = &pixel.Vec{X: cheemsVec.X - 1000, Y: cheemsVec.Y}
+		camSpeed  = 400.0
+		camZoom   = 1.0
+		//camZoomSpeed = 1.2
 		//camXStart    = pixel.ZV.X
 		//camYStart    = pixel.ZV.Y
-		trees       []*pixel.Sprite
-		matrices    []pixel.Matrix
-		counter     = 0
-		treeCounter = 0
+		trees          []*pixel.Sprite
+		matrices       []pixel.Matrix
+		counter        = 0
+		treeCounter    = 0
+		cheemsBackward = false
 	)
 
 	last := time.Now()
@@ -139,10 +145,12 @@ func run() {
 
 		if win.Pressed(pixelgl.KeyLeft) || win.Pressed(pixelgl.KeyA) {
 			//camPos.X -= camSpeed * dt
+			cheemsBackward = true
 			cheemsVec = &pixel.Vec{X: cheemsVec.X - (camSpeed*0.2)*dt, Y: cheemsVec.Y}
 		}
 		if win.Pressed(pixelgl.KeyRight) || win.Pressed(pixelgl.KeyD) {
 			//camPos.X += camSpeed * dt
+			cheemsBackward = false
 			cheemsVec = &pixel.Vec{X: cheemsVec.X + (camSpeed*2)*dt, Y: cheemsVec.Y}
 		}
 		if win.Pressed(pixelgl.KeyDown) || win.Pressed(pixelgl.KeyS) {
@@ -153,7 +161,7 @@ func run() {
 			//camPos.Y += camSpeed * dt
 			cheemsVec = &pixel.Vec{X: cheemsVec.X, Y: cheemsVec.Y + camSpeed*dt}
 		}
-		camZoom *= math.Pow(camZoomSpeed, win.MouseScroll().Y)
+		//camZoom *= math.Pow(camZoomSpeed, win.MouseScroll().Y)
 
 		if cheemsVec.X < camPos.X-450 {
 			cheemsVec = &pixel.Vec{X: camPos.X - 450, Y: cheemsVec.Y}
@@ -173,7 +181,12 @@ func run() {
 			tree.Draw(win, matrices[i])
 		}
 
-		cheems.Draw(win, pixel.IM.Scaled(pixel.ZV, 0.05).Moved(*cheemsVec))
+		if cheemsBackward {
+			cheemsBack.Draw(win, pixel.IM.Scaled(pixel.ZV, 0.15).Moved(*cheemsVec))
+		} else {
+			cheems.Draw(win, pixel.IM.Scaled(pixel.ZV, 0.15).Moved(*cheemsVec))
+		}
+
 		bork.Draw(win, pixel.IM.Scaled(pixel.ZV, 2.0).Moved(*borkVec))
 
 		win.Update()
