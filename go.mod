@@ -12,5 +12,5 @@ require (
 	github.com/go-gl/mathgl v0.0.0-20190713194549-592312d8590a // indirect
 	github.com/pkg/errors v0.9.1
 	golang.org/x/image v0.0.0-20200430140353-33d19683fad8
-	golang.org/x/sys v0.0.0-20200501145240-bc7a7d42d5c3 // indirect
+	golang.org/x/sys v0.0.0-20210414055047-fe65e336abe0 // indirect
 )

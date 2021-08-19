@@ -59,5 +59,6 @@ golang.org/x/mobile/event/touch
 golang.org/x/mobile/geom
 golang.org/x/mobile/gl
 golang.org/x/mobile/internal/mobileinit
-# golang.org/x/sys v0.0.0-20200501145240-bc7a7d42d5c3
+# golang.org/x/sys v0.0.0-20210414055047-fe65e336abe0
+golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/windows
