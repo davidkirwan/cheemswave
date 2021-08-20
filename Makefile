@@ -9,7 +9,7 @@
 include ./scripts/*.mk
 .DEFAULT_GOAL:=help
 PROJECT=parallax_scrolling
-COMPILE_TARGET=./bin/$(PROJECT)
+COMPILE_TARGET=./build/$(PROJECT)
 ##############################
 
 .PHONY: help
@@ -24,4 +24,4 @@ help: ## Show this help screen
 ##@ All
 
 .PHONY: all
-all: dependencies clean build run ## Pull dependencies, builds binary, executes binary all in one
+all: dependencies clean build build-copy-assets run ## Pull dependencies, builds binary, executes binary all in one
