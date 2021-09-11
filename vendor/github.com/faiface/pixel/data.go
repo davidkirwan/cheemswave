@@ -8,6 +8,16 @@ import (
 	"math"
 )
 
+// zeroValueTriangleData is the default value of a TriangleData element
+var zeroValueTriangleData = struct {
+	Position  Vec
+	Color     RGBA
+	Picture   Vec
+	Intensity float64
+	ClipRect  Rect
+	IsClipped bool
+}{Color: RGBA{1, 1, 1, 1}}
+
 // TrianglesData specifies a list of Triangles vertices with three common properties:
 // TrianglesPosition, TrianglesColor and TrianglesPicture.
 type TrianglesData []struct {
@@ -15,6 +25,8 @@ type TrianglesData []struct {
 	Color     RGBA
 	Picture   Vec
 	Intensity float64
+	ClipRect  Rect
+	IsClipped bool
 }
 
 // MakeTrianglesData creates TrianglesData of length len initialized with default property values.
@@ -22,9 +34,11 @@ type TrianglesData []struct {
 // Prefer this function to make(TrianglesData, len), because make zeros them, while this function
 // does the correct intialization.
 func MakeTrianglesData(len int) *TrianglesData {
-	td := &TrianglesData{}
-	td.SetLen(len)
-	return td
+	td := make(TrianglesData, len)
+	for i := 0; i < len; i++ {
+		td[i] = zeroValueTriangleData
+	}
+	return &td
 }
 
 // Len returns the number of vertices in TrianglesData.
@@ -40,12 +54,7 @@ func (td *TrianglesData) SetLen(len int) {
 	if len > td.Len() {
 		needAppend := len - td.Len()
 		for i := 0; i < needAppend; i++ {
-			*td = append(*td, struct {
-				Position  Vec
-				Color     RGBA
-				Picture   Vec
-				Intensity float64
-			}{Color: RGBA{1, 1, 1, 1}})
+			*td = append(*td, zeroValueTriangleData)
 		}
 	}
 	if len < td.Len() {
@@ -82,6 +91,11 @@ func (td *TrianglesData) updateData(t Triangles) {
 			(*td)[i].Picture, (*td)[i].Intensity = t.Picture(i)
 		}
 	}
+	if t, ok := t.(TrianglesClipped); ok {
+		for i := range *td {
+			(*td)[i].ClipRect, (*td)[i].IsClipped = t.ClipRect(i)
+		}
+	}
 }
 
 // Update copies vertex properties from the supplied Triangles into this TrianglesData.
@@ -96,10 +110,9 @@ func (td *TrianglesData) Update(t Triangles) {
 
 // Copy returns an exact independent copy of this TrianglesData.
 func (td *TrianglesData) Copy() Triangles {
-	copyTd := TrianglesData{}
-	copyTd.SetLen(td.Len())
+	copyTd := MakeTrianglesData(td.Len())
 	copyTd.Update(td)
-	return &copyTd
+	return copyTd
 }
 
 // Position returns the position property of i-th vertex.
@@ -115,6 +128,11 @@ func (td *TrianglesData) Color(i int) RGBA {
 // Picture returns the picture property of i-th vertex.
 func (td *TrianglesData) Picture(i int) (pic Vec, intensity float64) {
 	return (*td)[i].Picture, (*td)[i].Intensity
+}
+
+// ClipRect returns the clipping rectangle property of the i-th vertex.
+func (td *TrianglesData) ClipRect(i int) (rect Rect, has bool) {
+	return (*td)[i].ClipRect, (*td)[i].IsClipped
 }
 
 // PictureData specifies an in-memory rectangular area of pixels and implements Picture and

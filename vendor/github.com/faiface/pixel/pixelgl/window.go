@@ -1,6 +1,7 @@
 package pixelgl
 
 import (
+	"fmt"
 	"image"
 	"image/color"
 	"runtime"
@@ -8,7 +9,8 @@ import (
 	"github.com/faiface/glhf"
 	"github.com/faiface/mainthread"
 	"github.com/faiface/pixel"
-	"github.com/go-gl/glfw/v3.2/glfw"
+	"github.com/go-gl/gl/v3.3-core/gl"
+	"github.com/go-gl/glfw/v3.3/glfw"
 	"github.com/pkg/errors"
 )
 
@@ -36,29 +38,59 @@ type WindowConfig struct {
 	// Bounds specify the bounds of the Window in pixels.
 	Bounds pixel.Rect
 
+	// Initial window position
+	Position pixel.Vec
+
 	// If set to nil, the Window will be windowed. Otherwise it will be fullscreen on the
 	// specified Monitor.
 	Monitor *Monitor
 
-	// Whether the Window is resizable.
+	// Resizable specifies whether the window will be resizable by the user.
 	Resizable bool
 
-	// Undecorated Window ommits the borders and decorations (close button, etc.).
+	// Undecorated Window omits the borders and decorations (close button, etc.).
 	Undecorated bool
+
+	// NoIconify specifies whether fullscreen windows should not automatically
+	// iconify (and restore the previous video mode) on focus loss.
+	NoIconify bool
+
+	// AlwaysOnTop specifies whether the windowed mode window will be floating
+	// above other regular windows, also called topmost or always-on-top.
+	// This is intended primarily for debugging purposes and cannot be used to
+	// implement proper full screen windows.
+	AlwaysOnTop bool
+
+	// TransparentFramebuffer specifies whether the window framebuffer will be
+	// transparent. If enabled and supported by the system, the window
+	// framebuffer alpha channel will be used to combine the framebuffer with
+	// the background. This does not affect window decorations.
+	TransparentFramebuffer bool
 
 	// VSync (vertical synchronization) synchronizes Window's framerate with the framerate of
 	// the monitor.
 	VSync bool
+
+	// Maximized specifies whether the window is maximized.
+	Maximized bool
+
+	// Invisible specifies whether the window will be initially hidden.
+	// You can make the window visible later using Window.Show().
+	Invisible bool
+
+	//SamplesMSAA specifies the level of MSAA to be used. Must be one of 0, 2, 4, 8, 16. 0 to disable.
+	SamplesMSAA int
 }
 
 // Window is a window handler. Use this type to manipulate a window (input, drawing, etc.).
 type Window struct {
 	window *glfw.Window
 
-	bounds        pixel.Rect
-	canvas        *Canvas
-	vsync         bool
-	cursorVisible bool
+	bounds             pixel.Rect
+	canvas             *Canvas
+	vsync              bool
+	cursorVisible      bool
+	cursorInsideWindow bool
 
 	// need to save these to correctly restore a fullscreen window
 	restore struct {
@@ -72,6 +104,11 @@ type Window struct {
 		scroll  pixel.Vec
 		typed   string
 	}
+
+	pressEvents, tempPressEvents     [KeyLast + 1]bool
+	releaseEvents, tempReleaseEvents [KeyLast + 1]bool
+
+	prevJoy, currJoy, tempJoy joystickState
 }
 
 var currWin *Window
@@ -87,6 +124,17 @@ func NewWindow(cfg WindowConfig) (*Window, error) {
 
 	w := &Window{bounds: cfg.Bounds, cursorVisible: true}
 
+	flag := false
+	for _, v := range []int{0, 2, 4, 8, 16} {
+		if cfg.SamplesMSAA == v {
+			flag = true
+			break
+		}
+	}
+	if !flag {
+		return nil, fmt.Errorf("invalid value '%v' for msaaSamples", cfg.SamplesMSAA)
+	}
+
 	err := mainthread.CallErr(func() error {
 		var err error
 
@@ -97,6 +145,16 @@ func NewWindow(cfg WindowConfig) (*Window, error) {
 
 		glfw.WindowHint(glfw.Resizable, bool2int[cfg.Resizable])
 		glfw.WindowHint(glfw.Decorated, bool2int[!cfg.Undecorated])
+		glfw.WindowHint(glfw.Floating, bool2int[cfg.AlwaysOnTop])
+		glfw.WindowHint(glfw.AutoIconify, bool2int[!cfg.NoIconify])
+		glfw.WindowHint(glfw.TransparentFramebuffer, bool2int[cfg.TransparentFramebuffer])
+		glfw.WindowHint(glfw.Maximized, bool2int[cfg.Maximized])
+		glfw.WindowHint(glfw.Visible, bool2int[!cfg.Invisible])
+		glfw.WindowHint(glfw.Samples, cfg.SamplesMSAA)
+
+		if cfg.Position.X != 0 || cfg.Position.Y != 0 {
+			glfw.WindowHint(glfw.Visible, glfw.False)
+		}
 
 		var share *glfw.Window
 		if currWin != nil {
@@ -114,9 +172,15 @@ func NewWindow(cfg WindowConfig) (*Window, error) {
 			return err
 		}
 
+		if cfg.Position.X != 0 || cfg.Position.Y != 0 {
+			w.window.SetPos(int(cfg.Position.X), int(cfg.Position.Y))
+			w.window.Show()
+		}
+
 		// enter the OpenGL context
 		w.begin()
 		glhf.Init()
+		gl.Enable(gl.MULTISAMPLE)
 		w.end()
 
 		return nil
@@ -158,6 +222,24 @@ func (w *Window) Destroy() {
 
 // Update swaps buffers and polls events. Call this method at the end of each frame.
 func (w *Window) Update() {
+	w.SwapBuffers()
+	w.UpdateInput()
+}
+
+// ClipboardText returns the current value of the systems clipboard.
+func (w *Window) ClipboardText() string {
+	return w.window.GetClipboardString()
+}
+
+// SetClipboardText passes the given string to the underlying glfw window to set the
+//	systems clipboard.
+func (w *Window) SetClipboardText(text string) {
+	w.window.SetClipboardString(text)
+}
+
+// SwapBuffers swaps buffers. Call this to swap buffers without polling window events.
+// Note that Update invokes SwapBuffers.
+func (w *Window) SwapBuffers() {
 	mainthread.Call(func() {
 		_, _, oldW, oldH := intBounds(w.bounds)
 		newW, newH := w.window.GetSize()
@@ -192,8 +274,6 @@ func (w *Window) Update() {
 		w.window.SwapBuffers()
 		w.end()
 	})
-
-	w.UpdateInput()
 }
 
 // SetClosed sets the closed flag of the Window.
@@ -354,6 +434,15 @@ func (w *Window) SetCursorVisible(visible bool) {
 	})
 }
 
+// SetCursorDisabled hides the cursor and provides unlimited virtual cursor movement
+// make cursor visible using SetCursorVisible
+func (w *Window) SetCursorDisabled() {
+	w.cursorVisible = false
+	mainthread.Call(func() {
+		w.window.SetInputMode(glfw.CursorMode, glfw.CursorDisabled)
+	})
+}
+
 // CursorVisible returns the visibility status of the mouse cursor.
 func (w *Window) CursorVisible() bool {
 	return w.cursorVisible
@@ -428,4 +517,28 @@ func (w *Window) Color(at pixel.Vec) pixel.RGBA {
 // Canvas returns the window's underlying Canvas
 func (w *Window) Canvas() *Canvas {
 	return w.canvas
+}
+
+// Show makes the window visible, if it was previously hidden. If the window is
+// already visible or is in full screen mode, this function does nothing.
+func (w *Window) Show() {
+	mainthread.Call(func() {
+		w.window.Show()
+	})
+}
+
+// Clipboard returns the contents of the system clipboard.
+func (w *Window) Clipboard() string {
+	var clipboard string
+	mainthread.Call(func() {
+		clipboard = w.window.GetClipboardString()
+	})
+	return clipboard
+}
+
+// SetClipboardString sets the system clipboard to the specified UTF-8 encoded string.
+func (w *Window) SetClipboard(str string) {
+	mainthread.Call(func() {
+		w.window.SetClipboardString(str)
+	})
 }

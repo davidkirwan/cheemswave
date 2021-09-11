@@ -1,4 +1,5 @@
 # github.com/faiface/beep v1.0.2
+## explicit
 github.com/faiface/beep
 github.com/faiface/beep/mp3
 github.com/faiface/beep/speaker
@@ -6,14 +7,16 @@ github.com/faiface/beep/speaker
 github.com/faiface/glhf
 # github.com/faiface/mainthread v0.0.0-20171120011319-8b78f0a41ae3
 github.com/faiface/mainthread
-# github.com/faiface/pixel v0.8.0
+# github.com/faiface/pixel v0.11.0-beta
+## explicit
 github.com/faiface/pixel
 github.com/faiface/pixel/pixelgl
 # github.com/go-gl/gl v0.0.0-20190320180904-bf2b1f2f34d7
 github.com/go-gl/gl/v3.3-core/gl
-# github.com/go-gl/glfw v0.0.0-20200420212212-258d9bec320e
-github.com/go-gl/glfw/v3.2/glfw
+# github.com/go-gl/glfw/v3.3/glfw v0.0.0-20191125211704-12ad95a8df72
+github.com/go-gl/glfw/v3.3/glfw
 # github.com/go-gl/mathgl v0.0.0-20190713194549-592312d8590a
+## explicit
 github.com/go-gl/mathgl/mgl32
 # github.com/gopherjs/gopherjs v0.0.0-20180825215210-0210a2f0f73c
 github.com/gopherjs/gopherjs/js
@@ -33,7 +36,10 @@ github.com/hajimehoshi/go-mp3/internal/sideinfo
 github.com/hajimehoshi/oto
 github.com/hajimehoshi/oto/internal/mux
 # github.com/pkg/errors v0.9.1
+## explicit
 github.com/pkg/errors
+# github.com/solarlune/resolv v0.0.0-20210908043747-fb656c998e64
+## explicit
 # golang.org/x/exp v0.0.0-20180710024300-14dda7b62fcd
 golang.org/x/exp/shiny/driver/gldriver
 golang.org/x/exp/shiny/driver/internal/drawer
@@ -44,6 +50,7 @@ golang.org/x/exp/shiny/driver/internal/win32
 golang.org/x/exp/shiny/driver/internal/x11key
 golang.org/x/exp/shiny/screen
 # golang.org/x/image v0.0.0-20200430140353-33d19683fad8
+## explicit
 golang.org/x/image/colornames
 golang.org/x/image/math/f32
 golang.org/x/image/math/f64
@@ -60,5 +67,6 @@ golang.org/x/mobile/geom
 golang.org/x/mobile/gl
 golang.org/x/mobile/internal/mobileinit
 # golang.org/x/sys v0.0.0-20210414055047-fe65e336abe0
+## explicit
 golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/windows

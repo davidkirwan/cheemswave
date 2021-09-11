@@ -1,5 +1,6 @@
-# Pixel [![Build Status](https://travis-ci.org/faiface/pixel.svg?branch=master)](https://travis-ci.org/faiface/pixel) [![GoDoc](https://godoc.org/github.com/faiface/pixel?status.svg)](https://godoc.org/github.com/faiface/pixel) [![Go Report Card](https://goreportcard.com/badge/github.com/faiface/pixel)](https://goreportcard.com/report/github.com/faiface/pixel) [![Join the chat at https://gitter.im/pixellib/Lobby](https://badges.gitter.im/pixellib/Lobby.svg)](https://gitter.im/pixellib/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+<p align="center"><img src="logo/LOGOTYPE-HORIZONTAL-BLUE.png"></p>
 
+# Pixel [![Build Status](https://travis-ci.org/faiface/pixel.svg?branch=master)](https://travis-ci.org/faiface/pixel) [![GoDoc](https://godoc.org/github.com/faiface/pixel?status.svg)](https://godoc.org/github.com/faiface/pixel) [![Go Report Card](https://goreportcard.com/badge/github.com/faiface/pixel)](https://goreportcard.com/report/github.com/faiface/pixel) [![Join the chat at https://gitter.im/pixellib/Lobby](https://badges.gitter.im/pixellib/Lobby.svg)](https://gitter.im/pixellib/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Discord Chat](https://img.shields.io/discord/699679031603494954)](https://discord.gg/q2DK4MP)  
 
 A hand-crafted 2D game library in Go. Take a look into the [features](#features) to see what it can
 do.
@@ -8,7 +9,17 @@ do.
 go get github.com/faiface/pixel
 ```
 
+If you are using Modules (Go 1.11 or higher) and want a mutable copy of the source code:
+
+```
+git clone https://github.com/faiface/pixel # clone outside of $GOPATH
+cd pixel
+go install ./...
+```
+
 See [requirements](#requirements) for the list of libraries necessary for compilation.
+
+All significant changes are documented in [CHANGELOG.md](CHANGELOG.md).
 
 ## Tutorial
 
@@ -46,9 +57,9 @@ Here are some screenshots from the examples!
 | --- | --- |
 | ![Smoke](https://github.com/faiface/pixel-examples/blob/master/smoke/screenshot.png) | ![Typewriter](https://github.com/faiface/pixel-examples/blob/master/typewriter/screenshot.png) |
 
-| [Raycaster](https://github.com/faiface/pixel-examples/blob/master/community/raycaster) | [Starfield](https://github.com/faiface/pixel-examples/blob/master/community/starfield) |
+| [Raycaster](https://github.com/faiface/pixel-examples/blob/master/community/raycaster) | [Gizmo](https://github.com/Lallassu/gizmo) |
 | --- | --- |
-| ![Raycaster](https://github.com/faiface/pixel-examples/blob/master/community/raycaster/screenshot.png) | ![Starfield](https://github.com/faiface/pixel-examples/blob/master/community/starfield/screenshot.png) |
+| ![Raycaster](https://github.com/faiface/pixel-examples/blob/master/community/raycaster/screenshot.png) | ![Gizmo](https://github.com/Lallassu/gizmo/blob/master/preview.png) |
 
 ## Features
 
@@ -94,6 +105,13 @@ Here's the list of the main features in Pixel. Although Pixel is still under hea
 - Small codebase, ~5K lines of code, including the backend [glhf](https://github.com/faiface/glhf)
   package
 
+ ## Related repositories
+
+ Here are some packages which use Pixel:
+ - [TilePix](https://github.com/bcvery1/tilepix) Makes handling TMX files built with [Tiled](https://www.mapeditor.org/) trivially easy to work with using Pixel.
+ - [spriteplus](https://github.com/cebarks/spriteplus) Basic `SpriteSheet` and `Animation` implementations
+ - [pixelutils](https://github.com/dusk125/pixelutils) Variety of game related utilities (sprite packer, id generator, ticker, sprite loader, voronoia diagrams)
+
 ## Missing features
 
 Pixel is in development and still missing few critical features. Here're the most critical ones.
@@ -104,8 +122,9 @@ Pixel is in development and still missing few critical features. Here're the mos
 - ~~Advanced window manipulation (cursor hiding, window icon, ...)~~
 - Better support for Hi-DPI displays
 - Mobile (and perhaps HTML5?) backend
-- More advanced graphical effects (e.g. blur)
+- ~~More advanced graphical effects (e.g. blur)~~ (solved with the addition of GLSL effects)
 - Tests and benchmarks
+- Vulkan support
 
 **Implementing these features will get us to the 1.0 release.** Contribute, so that it's as soon as
 possible!
@@ -126,7 +145,7 @@ The OpenGL version used is **OpenGL 3.3**.
   headers and libraries.
 - On Ubuntu/Debian-like Linux distributions, you need `libgl1-mesa-dev` and `xorg-dev` packages.
 - On CentOS/Fedora-like Linux distributions, you need `libX11-devel libXcursor-devel libXrandr-devel
-  libXinerama-devel mesa-libGL-devel libXi-devel` packages.
+  libXinerama-devel mesa-libGL-devel libXi-devel libXxf86vm-devel` packages.
 - See [here](http://www.glfw.org/docs/latest/compile.html#compile_deps) for full details.
 
 **The combination of Go 1.8, macOS and latest XCode seems to be problematic** as mentioned in issue
@@ -134,6 +153,8 @@ The OpenGL version used is **OpenGL 3.3**.
 **Upgrading to Go 1.8.1 fixes the issue.**
 
 ## Contributing
+
+Join us in the [Discord Chat!](https://discord.gg/q2DK4MP)
 
 Pixel is in, let's say, mid-stage of development. Many of the important features are here, some are
 missing. That's why **contributions are very important and welcome!** All alone, I will be able to
@@ -151,10 +172,6 @@ rewriting. That's perfectly fine, don't let it put you off. In the end, we'll ju
 better result.
 
 Take a look at [CONTRIBUTING.md](CONTRIBUTING.md) for further information.
-
-For any kind of discussion, feel free to use our
-[Gitter](https://gitter.im/pixellib/Lobby)
-community.
 
 ## License
 

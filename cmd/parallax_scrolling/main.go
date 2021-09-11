@@ -44,7 +44,7 @@ func removeMatrices(s []pixel.Matrix, index int) []pixel.Matrix {
 }
 
 func run() {
-	f, err := os.Open("assets/sound/Night_Lights_Original_Mix.mp3")
+	f, err := os.Open("assets/audio/Night_Lights_Original_Mix.mp3")
 	if err != nil {
 		log.Fatal(err)
 	}
