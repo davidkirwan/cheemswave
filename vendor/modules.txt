@@ -38,8 +38,6 @@ github.com/hajimehoshi/oto/internal/mux
 # github.com/pkg/errors v0.9.1
 ## explicit
 github.com/pkg/errors
-# github.com/solarlune/resolv v0.0.0-20210908043747-fb656c998e64
-## explicit
 # golang.org/x/exp v0.0.0-20180710024300-14dda7b62fcd
 golang.org/x/exp/shiny/driver/gldriver
 golang.org/x/exp/shiny/driver/internal/drawer

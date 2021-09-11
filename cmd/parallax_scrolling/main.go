@@ -26,6 +26,7 @@ import (
 	"time"
 
 	resources "github.com/davidkirwan/parallax_scrolling/internal/pkg/resources"
+//	game "github.com/davidkirwan/parallax_scrolling/internal/pkg/game"
 
 	"github.com/faiface/beep"
 	"github.com/faiface/beep/mp3"
@@ -72,7 +73,7 @@ func run() {
 		panic(err)
 	}
 
-	spritesheet, err := resources.LoadPNGPicture("assets/images/trees.png")
+	spritesheet, err := resources.LoadPNGPicture("assets/images/virus.png")
 	if err != nil {
 		panic(err)
 	}
@@ -95,10 +96,10 @@ func run() {
 	}
 	bork := pixel.NewSprite(b, b.Bounds())
 
-	var treesFrames []pixel.Rect
+	var viriiFrames []pixel.Rect
 	for x := spritesheet.Bounds().Min.X; x < spritesheet.Bounds().Max.X; x += 32 {
 		for y := spritesheet.Bounds().Min.Y; y < spritesheet.Bounds().Max.Y; y += 32 {
-			treesFrames = append(treesFrames, pixel.R(x, y, x+32, y+32))
+			viriiFrames = append(viriiFrames, pixel.R(x, y, x+32, y+32))
 		}
 	}
 
@@ -111,10 +112,10 @@ func run() {
 		//camZoomSpeed = 1.2
 		//camXStart    = pixel.ZV.X
 		//camYStart    = pixel.ZV.Y
-		trees          []*pixel.Sprite
+		virii          []*pixel.Sprite
 		matrices       []pixel.Matrix
 		counter        = 0
-		treeCounter    = 0
+		viriiCounter    = 0
 		cheemsBackward = false
 	)
 
@@ -134,21 +135,21 @@ func run() {
 		x := camPos.X + 1000.0
 		y := camPos.Y + rand.Float64()*600 - 250
 
-		fmt.Printf("Counter: %d, X: %f, Y: %f\n", counter, camPos.X, len(trees))
+		fmt.Printf("Counter: %d, X: %f, Y: %f\n", counter, camPos.X, len(virii))
 		if counter == 400 {
 			counter = 0
-			treeCounter = 0
+			viriiCounter = 0
 		}
 		if counter%20 == 0 {
-			if len(trees) < 20 {
-				tree := pixel.NewSprite(spritesheet, treesFrames[rand.Intn(len(treesFrames))])
-				treeVec := &pixel.Vec{X: x, Y: y}
-				trees = append(trees, tree)
-				matrices = append(matrices, pixel.IM.Scaled(pixel.ZV, 4).Moved(*treeVec))
+			if len(virii) < 20 {
+				virus := pixel.NewSprite(spritesheet, viriiFrames[rand.Intn(len(viriiFrames))])
+				viriiVec := &pixel.Vec{X: x, Y: y}
+				virii = append(virii, virus)
+				matrices = append(matrices, pixel.IM.Scaled(pixel.ZV, 4).Moved(*viriiVec))
 			} else {
-				treeVec := &pixel.Vec{X: x, Y: y}
-				matrices[treeCounter] = pixel.IM.Scaled(pixel.ZV, 4).Moved(*treeVec)
-				treeCounter++
+				viriiVec := &pixel.Vec{X: x, Y: y}
+				matrices[viriiCounter] = pixel.IM.Scaled(pixel.ZV, 4).Moved(*viriiVec)
+				viriiCounter++
 			}
 		}
 		counter++
@@ -195,8 +196,8 @@ func run() {
 
 		win.Clear(colornames.Azure)
 
-		for i, tree := range trees {
-			tree.Draw(win, matrices[i])
+		for i, virus := range virii {
+			virus.Draw(win, matrices[i])
 		}
 
 		if cheemsBackward {
