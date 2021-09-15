@@ -22,8 +22,10 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
+	"math"
 	"os"
 	"time"
+	"strconv"
 
 	resources "github.com/davidkirwan/parallax_scrolling/internal/pkg/resources"
 //	game "github.com/davidkirwan/parallax_scrolling/internal/pkg/game"
@@ -49,6 +51,8 @@ func run() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	debug, _ := strconv.ParseBool(os.Getenv("DEBUG"))
 
 	done := make(chan bool)
 	streamer, format, err := mp3.Decode(f)
@@ -109,7 +113,7 @@ func run() {
 		borkVec   = &pixel.Vec{X: cheemsVec.X - 1000, Y: cheemsVec.Y}
 		camSpeed  = 400.0
 		camZoom   = 1.0
-		//camZoomSpeed = 1.2
+		camZoomSpeed = 1.2
 		//camXStart    = pixel.ZV.X
 		//camYStart    = pixel.ZV.Y
 		virii          []*pixel.Sprite
@@ -133,15 +137,15 @@ func run() {
 
 		camPos.X += camSpeed * dt
 		x := camPos.X + 1000.0
-		y := camPos.Y + rand.Float64()*600 - 250
+		y := camPos.Y + rand.Float64() * 768 - 300
 
 		fmt.Printf("Counter: %d, X: %f, Y: %f\n", counter, camPos.X, len(virii))
 		if counter == 400 {
 			counter = 0
 			viriiCounter = 0
 		}
-		if counter%20 == 0 {
-			if len(virii) < 20 {
+		if counter%15 == 0 {
+			if len(virii) < 50 {
 				virus := pixel.NewSprite(spritesheet, viriiFrames[rand.Intn(len(viriiFrames))])
 				viriiVec := &pixel.Vec{X: x, Y: y}
 				virii = append(virii, virus)
@@ -163,24 +167,34 @@ func run() {
 		}
 
 		if win.Pressed(pixelgl.KeyLeft) || win.Pressed(pixelgl.KeyA) {
-			//camPos.X -= camSpeed * dt
+		        if debug {
+				camPos.X -= camSpeed * dt
+			}
 			cheemsBackward = true
 			cheemsVec = &pixel.Vec{X: cheemsVec.X - (camSpeed*0.2)*dt, Y: cheemsVec.Y}
 		}
 		if win.Pressed(pixelgl.KeyRight) || win.Pressed(pixelgl.KeyD) {
-			//camPos.X += camSpeed * dt
+			if debug {
+			  camPos.X += camSpeed * dt
+			}
 			cheemsBackward = false
 			cheemsVec = &pixel.Vec{X: cheemsVec.X + (camSpeed*2)*dt, Y: cheemsVec.Y}
 		}
 		if win.Pressed(pixelgl.KeyDown) || win.Pressed(pixelgl.KeyS) {
-			//camPos.Y -= camSpeed * dt
+			if debug {
+			  camPos.Y -= camSpeed * dt
+			}
 			cheemsVec = &pixel.Vec{X: cheemsVec.X, Y: cheemsVec.Y - camSpeed*dt}
 		}
 		if win.Pressed(pixelgl.KeyUp) || win.Pressed(pixelgl.KeyW) {
-			//camPos.Y += camSpeed * dt
+			if debug {
+			  camPos.Y += camSpeed * dt
+			}
 			cheemsVec = &pixel.Vec{X: cheemsVec.X, Y: cheemsVec.Y + camSpeed*dt}
 		}
-		//camZoom *= math.Pow(camZoomSpeed, win.MouseScroll().Y)
+		if debug {
+		  camZoom *= math.Pow(camZoomSpeed, win.MouseScroll().Y)
+		}
 
 		if cheemsVec.X < camPos.X-450 {
 			cheemsVec = &pixel.Vec{X: camPos.X - 450, Y: cheemsVec.Y}
