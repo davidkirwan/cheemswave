@@ -4,25 +4,32 @@ github.com/faiface/beep
 github.com/faiface/beep/mp3
 github.com/faiface/beep/speaker
 # github.com/faiface/glhf v0.0.0-20181018222622-82a6317ac380
+## explicit
 github.com/faiface/glhf
 # github.com/faiface/mainthread v0.0.0-20171120011319-8b78f0a41ae3
+## explicit
 github.com/faiface/mainthread
 # github.com/faiface/pixel v0.11.0-beta
-## explicit
+## explicit; go 1.12
 github.com/faiface/pixel
 github.com/faiface/pixel/pixelgl
 # github.com/go-gl/gl v0.0.0-20190320180904-bf2b1f2f34d7
+## explicit
 github.com/go-gl/gl/v3.3-core/gl
 # github.com/go-gl/glfw/v3.3/glfw v0.0.0-20191125211704-12ad95a8df72
+## explicit; go 1.10
 github.com/go-gl/glfw/v3.3/glfw
 # github.com/go-gl/mathgl v0.0.0-20190713194549-592312d8590a
-## explicit
+## explicit; go 1.11
 github.com/go-gl/mathgl/mgl32
 # github.com/gopherjs/gopherjs v0.0.0-20180825215210-0210a2f0f73c
+## explicit
 github.com/gopherjs/gopherjs/js
 # github.com/gopherjs/gopherwasm v1.0.0
+## explicit
 github.com/gopherjs/gopherwasm/js
 # github.com/hajimehoshi/go-mp3 v0.1.1
+## explicit
 github.com/hajimehoshi/go-mp3
 github.com/hajimehoshi/go-mp3/internal/bits
 github.com/hajimehoshi/go-mp3/internal/consts
@@ -33,12 +40,14 @@ github.com/hajimehoshi/go-mp3/internal/imdct
 github.com/hajimehoshi/go-mp3/internal/maindata
 github.com/hajimehoshi/go-mp3/internal/sideinfo
 # github.com/hajimehoshi/oto v0.3.1
+## explicit
 github.com/hajimehoshi/oto
 github.com/hajimehoshi/oto/internal/mux
 # github.com/pkg/errors v0.9.1
 ## explicit
 github.com/pkg/errors
 # golang.org/x/exp v0.0.0-20180710024300-14dda7b62fcd
+## explicit
 golang.org/x/exp/shiny/driver/gldriver
 golang.org/x/exp/shiny/driver/internal/drawer
 golang.org/x/exp/shiny/driver/internal/errscreen
@@ -47,12 +56,13 @@ golang.org/x/exp/shiny/driver/internal/lifecycler
 golang.org/x/exp/shiny/driver/internal/win32
 golang.org/x/exp/shiny/driver/internal/x11key
 golang.org/x/exp/shiny/screen
-# golang.org/x/image v0.18.0
-## explicit
+# golang.org/x/image v0.38.0
+## explicit; go 1.25.0
 golang.org/x/image/colornames
 golang.org/x/image/math/f32
 golang.org/x/image/math/f64
 # golang.org/x/mobile v0.0.0-20180806140643-507816974b79
+## explicit
 golang.org/x/mobile/app
 golang.org/x/mobile/app/internal/callfn
 golang.org/x/mobile/event/key
@@ -64,5 +74,6 @@ golang.org/x/mobile/event/touch
 golang.org/x/mobile/geom
 golang.org/x/mobile/gl
 golang.org/x/mobile/internal/mobileinit
-# golang.org/x/sys v0.20.0
+# golang.org/x/sys v0.41.0
+## explicit; go 1.24.0
 golang.org/x/sys/windows
